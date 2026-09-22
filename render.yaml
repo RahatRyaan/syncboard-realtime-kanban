@@ -1,0 +1,58 @@
+services:
+  # --- SyncBoard NestJS API & WebSocket Gateway ---
+  - type: web
+    name: syncboard-api
+    runtime: node
+    plan: free
+    region: oregon
+    buildCommand: pnpm install --frozen-lockfile && pnpm --filter @syncboard/shared-types run build && pnpm --filter @syncboard/api run build
+    startCommand: node apps/api/dist/main.js
+    healthCheckPath: /api/v1/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 4000
+      - key: CORS_ORIGIN
+        value: https://syncboard.vercel.app,https://*.vercel.app,http://localhost:5173
+      - key: MONGO_URI
+        sync: false
+      - key: REDIS_HOST
+        fromService:
+          type: redis
+          name: syncboard-redis
+          property: host
+      - key: REDIS_PORT
+        fromService:
+          type: redis
+          name: syncboard-redis
+          property: port
+      - key: REDIS_PASSWORD
+        fromService:
+          type: redis
+          name: syncboard-redis
+          property: password
+      - key: JWT_SECRET
+        generateValue: true
+      - key: JWT_REFRESH_SECRET
+        generateValue: true
+      - key: JWT_EXPIRES_IN
+        value: 15m
+      - key: JWT_REFRESH_EXPIRES_IN
+        value: 7d
+      - key: AWS_ACCESS_KEY_ID
+        sync: false
+      - key: AWS_SECRET_ACCESS_KEY
+        sync: false
+      - key: AWS_BUCKET_NAME
+        value: my-unique-app-uploads-2026
+      - key: AWS_REGION
+        value: us-east-1
+
+  # --- SyncBoard Free Managed Redis Store ---
+  - type: redis
+    name: syncboard-redis
+    plan: free
+    region: oregon
+    maxmemoryPolicy: allkeys-lru
+    ipAllowList: []

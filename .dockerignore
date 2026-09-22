@@ -1,0 +1,13 @@
+node_modules
+dist
+coverage
+.git
+.env
+.env.*
+!.env.example
+*.tsbuildinfo
+test
+*.md
+.kilo
+.agents
+.cursor

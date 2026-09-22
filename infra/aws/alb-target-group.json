@@ -1,0 +1,34 @@
+{
+  "TargetGroupName": "syncboard-api-tg",
+  "Protocol": "HTTP",
+  "Port": 4000,
+  "TargetType": "ip",
+  "HealthCheckProtocol": "HTTP",
+  "HealthCheckPort": "4000",
+  "HealthCheckPath": "/api/v1/health",
+  "HealthCheckIntervalSeconds": 15,
+  "HealthCheckTimeoutSeconds": 5,
+  "HealthyThresholdCount": 2,
+  "UnhealthyThresholdCount": 3,
+  "Matcher": {
+    "HttpCode": "200"
+  },
+  "TargetGroupAttributes": [
+    {
+      "Key": "stickiness.enabled",
+      "Value": "true"
+    },
+    {
+      "Key": "stickiness.type",
+      "Value": "lb_cookie"
+    },
+    {
+      "Key": "stickiness.lb_cookie.duration_seconds",
+      "Value": "86400"
+    },
+    {
+      "Key": "deregistration_delay.timeout_seconds",
+      "Value": "30"
+    }
+  ]
+}
