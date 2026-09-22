@@ -27,11 +27,6 @@ services:
           type: redis
           name: syncboard-redis
           property: port
-      - key: REDIS_PASSWORD
-        fromService:
-          type: redis
-          name: syncboard-redis
-          property: password
       - key: JWT_SECRET
         generateValue: true
       - key: JWT_REFRESH_SECRET
