@@ -12,6 +12,11 @@ jobs:
     runs-on: ubuntu-latest
 
     services:
+      mongodb:
+        image: mongo:7.0
+        ports:
+          - 27017:27017
+
       redis:
         image: redis:7-alpine
         ports:
@@ -64,8 +69,15 @@ jobs:
       - name: Run Playwright E2E Tests
         env:
           PORT: 4000
+          NODE_ENV: test
+          MONGO_URI: mongodb://localhost:27017/syncboard_ci
           REDIS_HOST: localhost
           REDIS_PORT: 6379
           JWT_SECRET: dev_jwt_secret_key_change_in_production_32chars
           JWT_REFRESH_SECRET: dev_refresh_secret_key_change_in_production_32chars
+          CORS_ORIGIN: http://localhost:5173
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID || 'ci_mock_key' }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY || 'ci_mock_secret' }}
+          AWS_BUCKET_NAME: my-unique-app-uploads-2026
+          AWS_REGION: us-east-1
         run: pnpm exec playwright test
