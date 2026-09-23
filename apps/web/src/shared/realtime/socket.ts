@@ -10,12 +10,13 @@ class SocketManager {
       return this.socket;
     }
 
-    const wsUrl =
-      (import.meta as any).env?.VITE_WS_URL ||
+    let envUrl = ((import.meta as any).env?.VITE_WS_URL ||
       (import.meta as any).env?.VITE_API_URL ||
-      '/';
+      '/') as string;
 
-    this.socket = io(wsUrl, {
+    envUrl = envUrl.trim().replace(/\/api\/v1\/?$/, '').replace(/\/+$/, '') || '/';
+
+    this.socket = io(envUrl, {
       auth: { token },
       autoConnect: true,
       transports: ['websocket', 'polling'],

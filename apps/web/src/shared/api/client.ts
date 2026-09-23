@@ -26,8 +26,13 @@ class ApiClient {
   private baseUrl: string;
   private token: string | null = null;
 
-  constructor(baseUrl: string = '/api/v1') {
-    this.baseUrl = baseUrl;
+  constructor(baseUrl?: string) {
+    let envUrl = ((import.meta as any).env?.VITE_API_URL as string) || '';
+    envUrl = envUrl.trim().replace(/\/+$/, '');
+    if (envUrl && !envUrl.endsWith('/api/v1')) {
+      envUrl = `${envUrl}/api/v1`;
+    }
+    this.baseUrl = baseUrl || envUrl || '/api/v1';
   }
 
   setToken(token: string | null) {
@@ -38,45 +43,60 @@ class ApiClient {
     return this.token;
   }
 
-  async request<T>(
+  private async request<T>(
     endpoint: string,
     options: RequestInit = {},
   ): Promise<ApiResponse<T>> {
-    const url = `${this.baseUrl}${endpoint.startsWith('/') ? endpoint : `/${endpoint}`}`;
+    const cleanEndpoint = endpoint.startsWith('/') ? endpoint : `/${endpoint}`;
+    const url = `${this.baseUrl}${cleanEndpoint}`;
 
-    const headers: Record<string, string> = {
-      'Content-Type': 'application/json',
-      'X-Requested-With': 'XMLHttpRequest',
-      ...(options.headers as Record<string, string>),
-    };
-
-    if (this.token) {
-      headers['Authorization'] = `Bearer ${this.token}`;
+    const headers = new Headers(options.headers);
+    if (!headers.has('Content-Type') && options.body) {
+      headers.set('Content-Type', 'application/json');
     }
 
-    const response = await fetch(url, {
-      ...options,
-      headers,
-      credentials: 'include',
-    });
+    if (this.token && !headers.has('Authorization')) {
+      headers.set('Authorization', `Bearer ${this.token}`);
+    }
 
-    const data: ApiResponse<T> = await response.json().catch(() => ({
-      success: false,
-      data: null,
-      error: { code: 'UNKNOWN_ERROR', message: 'Non-JSON server response' },
-      meta: null,
-    }));
+    let response: Response;
+    try {
+      response = await fetch(url, {
+        ...options,
+        headers,
+        credentials: 'include',
+      });
+    } catch (networkErr: any) {
+      throw new ApiClientError(
+        'NETWORK_ERROR',
+        'Backend server is waking up or unreachable. Please wait 15 seconds and try again.',
+        undefined,
+        0,
+      );
+    }
 
-    if (!response.ok || !data.success) {
-      if (response.status === 409 || data.error?.code === ApiErrorCodes.VERSION_CONFLICT) {
+    let data: ApiResponse<T>;
+    try {
+      data = await response.json();
+    } catch {
+      throw new ApiClientError(
+        'PARSE_ERROR',
+        `Server returned non-JSON response (${response.status} ${response.statusText})`,
+        undefined,
+        response.status,
+      );
+    }
+
+    if (!response.ok) {
+      if (response.status === 409 && data.error?.code === ApiErrorCodes.VERSION_CONFLICT) {
         throw new VersionConflictError(
-          data.error?.message || 'Version conflict detected',
-          data.data,
+          data.error.message || 'Version conflict detected',
+          (data.error as any).current,
         );
       }
 
       throw new ApiClientError(
-        data.error?.code || 'UNKNOWN_ERROR',
+        data.error?.code || 'REQUEST_FAILED',
         data.error?.message || response.statusText,
         data.error?.details,
         response.status,
@@ -111,8 +131,4 @@ class ApiClient {
   }
 }
 
-const defaultBaseUrl = (import.meta as any).env?.VITE_API_URL
-  ? `${(import.meta as any).env.VITE_API_URL.replace(/\/$/, '')}/api/v1`
-  : '/api/v1';
-
-export const apiClient = new ApiClient(defaultBaseUrl);
+export const apiClient = new ApiClient();
