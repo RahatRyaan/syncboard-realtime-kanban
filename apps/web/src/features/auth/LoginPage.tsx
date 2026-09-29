@@ -1,21 +1,20 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
 import {
   Eye,
   EyeOff,
   AlertCircle,
   Loader2,
-  Sparkles,
   LogIn,
   ShieldCheck,
   Kanban,
   Users,
   Zap,
   ArrowRight,
+  Crown,
 } from 'lucide-react';
 import { useAuth } from '../../app/providers';
-import { getDemoAccountApi, DemoAccountInfo } from './api';
+import { getDemoAccount, DemoAccountInfo } from './api';
 import { ThemeToggle } from '../../shared/ui/ThemeToggle';
 
 const HIGHLIGHTS = [
@@ -36,12 +35,9 @@ export function LoginPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const emailRef = useRef<HTMLInputElement>(null);
 
-  const { data: demo } = useQuery<DemoAccountInfo>({
-    queryKey: ['demo-account'],
-    queryFn: getDemoAccountApi,
-    staleTime: Infinity,
-    retry: false,
-  });
+  // Resolved synchronously so the demo button is present on first paint
+  // instead of appearing after a network round-trip.
+  const demo: DemoAccountInfo = getDemoAccount();
 
   useEffect(() => {
     emailRef.current?.focus();
@@ -64,13 +60,18 @@ export function LoginPage() {
     }
   };
 
+  /**
+   * Signs straight in as the demo owner. This is a dedicated one-click path:
+   * it does not depend on the form fields and does not require the API to
+   * advertise a demo account.
+   */
   const handleDemoLogin = async () => {
-    if (!demo?.enabled || !demo.email || !demo.password || isSubmitting) return;
+    if (!demo.enabled || !demo.email || !demo.password || isSubmitting) return;
 
     setEmail(demo.email);
     setPassword(demo.password);
     setError(null);
-    setNotice('Signed in with the demo account.');
+    setNotice(null);
     setIsSubmitting(true);
 
     try {
@@ -79,7 +80,7 @@ export function LoginPage() {
     } catch (err: any) {
       setError(
         err.message ||
-          'The demo account is not available right now. Try running the API with SEED_DEMO_DATA=true.',
+          'Could not sign in to the demo account. The API may be waking up — this is expected on a free-tier host that has gone to sleep.',
       );
       setIsSubmitting(false);
     }
@@ -173,7 +174,7 @@ export function LoginPage() {
             </div>
           )}
 
-          {demo?.enabled && demo.email && (
+          {demo.enabled && demo.email && (
             <button
               type="button"
               onClick={handleDemoLogin}
@@ -181,12 +182,12 @@ export function LoginPage() {
               className="w-full mb-5 group flex items-center gap-3 p-3.5 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white text-left transition-all disabled:opacity-60 shadow-lg shadow-indigo-500/20"
             >
               <span className="w-9 h-9 rounded-lg bg-white/15 flex items-center justify-center shrink-0">
-                <Sparkles className="w-4 h-4" aria-hidden="true" />
+                <Crown className="w-4 h-4" aria-hidden="true" />
               </span>
               <span className="flex-1 min-w-0">
-                <span className="block text-sm font-bold">Explore as demo owner</span>
+                <span className="block text-sm font-bold">Sign in as demo owner</span>
                 <span className="block text-xs opacity-80 truncate">
-                  {demo.email} · seeded with sample boards
+                  {demo.email} · full owner access, no signup
                 </span>
               </span>
               {isSubmitting ? (
@@ -200,7 +201,7 @@ export function LoginPage() {
             </button>
           )}
 
-          {demo?.enabled && (
+          {demo.enabled && (
             <div className="flex items-center gap-3 mb-5" aria-hidden="true">
               <span className="h-px flex-1 bg-line" />
               <span className="text-[11px] font-semibold uppercase tracking-wider text-content-faint">

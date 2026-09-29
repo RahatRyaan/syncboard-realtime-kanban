@@ -84,14 +84,38 @@ export interface DemoAccountInfo {
 }
 
 /**
- * Asks the server whether a public demo account is available. The credential is
- * only ever returned when the server was started with SEED_DEMO_DATA=true.
+ * Demo owner credential, resolved in the browser.
+ *
+ * The login page must always show this button, including on a deployed API
+ * that was never started with SEED_DEMO_DATA=true, so the credential lives
+ * here rather than behind a server round-trip. It is deliberately public: the
+ * demo workspace is a throwaway seeded account, never a real one. Set
+ * VITE_DEMO_PASSWORD to a different value, or to an empty string to hide the
+ * button entirely.
  */
-export async function getDemoAccountApi(): Promise<DemoAccountInfo> {
-  try {
-    const res = await apiClient.get<DemoAccountInfo>('/demo/account');
-    return res.data || { enabled: false };
-  } catch {
+export const DEMO_OWNER = {
+  email: 'demo@syncboard.app',
+  password: 'SyncBoard!Demo2026',
+  workspaceName: 'Acme Product Team',
+} as const;
+
+/**
+ * Reads the demo credential from build-time env, falling back to the built-in
+ * default. An explicitly empty VITE_DEMO_PASSWORD disables the button.
+ */
+export function getDemoAccount(): DemoAccountInfo {
+  const env = (import.meta as any).env ?? {};
+  const email = env.VITE_DEMO_EMAIL as string | undefined;
+  const password = env.VITE_DEMO_PASSWORD as string | undefined;
+
+  if (password === '' || email === '') {
     return { enabled: false };
   }
+
+  return {
+    enabled: true,
+    email: email || DEMO_OWNER.email,
+    password: password || DEMO_OWNER.password,
+    workspaceName: DEMO_OWNER.workspaceName,
+  };
 }
