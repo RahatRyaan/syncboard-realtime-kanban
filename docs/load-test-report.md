@@ -12,14 +12,19 @@
 SyncBoard's real-time collaboration layer was subjected to a high-concurrency stress test simulating **200 concurrent WebSocket clients** actively collaborating on a single Kanban board.
 
 | Metric | Target / SLA | Benchmark Result | Status |
-|---|---|---|:---:|
+|---|---|:---:|:---:|
 | **Concurrent WebSocket Connections** | 200 concurrent VUs | **200 / 200 Connected (100%)** | ✅ Passed |
-| **Connection Establishment Time** | < 3,000 ms | **2,044 ms** | ✅ Passed |
+| **Connection Establishment Time** | < 3,000 ms | **2,042 ms** | ✅ Passed |
 | **Connection Errors / Drops** | 0% | **0 (0.00%)** | ✅ Passed |
-| **Event Emission Latency (p95)** | < 150 ms | **0.43 ms** | ✅ Passed |
-| **Event Emission Latency (p99)** | < 300 ms | **0.56 ms** | ✅ Passed |
-| **Optimistic Concurrency Conflict Handling** | 100% graceful reconciliation | **168 / 168 Conflicts Handled** | ✅ Passed |
-| **Real-Time Fanout Delivery** | High delivery rate across rooms | **1,000+ Broadcasts Delivered** | ✅ Passed |
+| **Event Emission Latency (p95)** | < 150 ms | **0.38 ms** | ✅ Passed |
+| **Event Emission Latency (p99)** | < 300 ms | **0.52 ms** | ✅ Passed |
+| **Optimistic Concurrency Conflict Handling** | 100% graceful reconciliation | **23 / 23 Conflicts Handled** | ✅ Passed |
+| **Real-Time Fanout Delivery** | High delivery rate across rooms | **400 Broadcasts Delivered** | ✅ Passed |
+
+> Figures above are from the run recorded in §3. Broadcast volume and conflict
+> count vary between runs depending on how many clients land on the same card
+> in the contention window; connection count, error rate, and latency
+> percentiles were stable across runs.
 
 ---
 
@@ -47,16 +52,16 @@ Under high concurrency, multiple clients attempted to move the same card concurr
 ======================================================
 • Concurrent WebSocket Clients: 200
 • Total Card Move Operations:   299
-• Real-Time Broadcasts Fanout:  1,000+
-• Version Conflict Rejections:  168
+• Real-Time Broadcasts Fanout:  400
+• Version Conflict Handled:     23
 • Connection Errors:            0
 ------------------------------------------------------
 📈 Latency Percentiles:
-  - Average: 0.31 ms
-  - p50:     0.29 ms
-  - p90:     0.39 ms
-  - p95:     0.43 ms
-  - p99:     0.56 ms
+  - Average: 0.26 ms
+  - p50:     0.24 ms
+  - p90:     0.35 ms
+  - p95:     0.38 ms
+  - p99:     0.52 ms
 ======================================================
 ```
 
@@ -72,7 +77,10 @@ Under high concurrency, multiple clients attempted to move the same card concurr
    - Single-card write operations complete in under 5ms on Atlas. OCC prevents document corruption without requiring distributed locks.
 
 3. **Memory Footprint:**
-   - 200 active WebSocket connections consumed approximately ~16MB of heap memory, confirming that a standard AWS ECS Fargate task (0.5 vCPU, 1GB RAM) can easily support 2,000+ active connections per container.
+   - 200 active WebSocket connections completed the run without memory pressure
+     on a single Node process. The ~16 MB heap figure and the 2,000-connection
+     projection below are estimates, not measured results — size capacity with a
+     real load test before relying on them.
 
 ---
 

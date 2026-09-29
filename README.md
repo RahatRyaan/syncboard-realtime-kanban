@@ -111,25 +111,22 @@ SyncBoard includes test suites across all layers of the stack:
 ### Run All Unit Tests (Jest)
 ```bash
 pnpm --filter @syncboard/api run test
-# Runs 19 unit tests covering Storage, Comments, Search, Cards, Workspaces, Boards, Health, and Metrics
-```
-
-### Run Backend E2E Tests (Jest + Supertest)
-```bash
-pnpm --filter @syncboard/api run test:e2e
-# Runs 20 isolated in-memory E2E tests for Auth, Refresh Rotation, Workspace RBAC, and RolesGuard
+# Runs 32 unit tests across 9 suites covering Storage, Comments, Search, Cards,
+# Workspaces, Boards, Health, Metrics, and avatar upload validation
 ```
 
 ### Run Full User Journey E2E Tests (Playwright)
 ```bash
 pnpm exec playwright test
-# Runs 17 Playwright E2E browser tests for Registration, Login, Workspace isolation, Drag-and-Drop, S3, and Comments
+# Runs 17 Playwright E2E browser tests for Registration, Login, Workspace
+# isolation, collaboration, and RBAC. Requires MongoDB on localhost:27017.
 ```
 
-### Run 200-Client Concurrency Load Benchmark
+### Concurrency Load Harness
 ```bash
 node infra/loadtest/bench-runner.mjs
-# Connects 200 concurrent WebSocket clients, tests real-time card move latency, and verifies OCC under stress
+# Harness for driving concurrent WebSocket clients and verifying optimistic
+# concurrency under contention. See docs/load-test-report.md for a recorded run.
 ```
 
 ---
@@ -160,6 +157,6 @@ Detailed instructions for **Amazon ECR**, **AWS ECS Fargate**, **Application Loa
 - **Master Engineering Build Plan:** [`SyncBoard-Master-Build-Plan.md`](SyncBoard-Master-Build-Plan.md)
 
 ---
-
 ## 📄 License
-MIT License © 2026 SyncBoard Team
+
+MIT License © 2026 RahatRyaan — see [`LICENSE`](LICENSE).
