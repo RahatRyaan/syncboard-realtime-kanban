@@ -6,13 +6,14 @@ import { LoginPage } from '../features/auth/LoginPage';
 import { RegisterPage } from '../features/auth/RegisterPage';
 import { WorkspaceDashboard } from '../features/workspaces/WorkspaceDashboard';
 import { BoardView } from '../features/boards/BoardView';
+import { ProfilePage } from '../features/profile/ProfilePage';
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { isAuthenticated, isLoading } = useAuth();
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-slate-950 flex items-center justify-center text-slate-400">
+      <div className="min-h-screen bg-surface flex items-center justify-center text-content-muted">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-500 mr-3"></div>
         Loading SyncBoard...
       </div>
@@ -31,7 +32,7 @@ function PublicAuthRoute({ children }: { children: React.ReactNode }) {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-slate-950 flex items-center justify-center text-slate-400">
+      <div className="min-h-screen bg-surface flex items-center justify-center text-content-muted">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-500 mr-3"></div>
       </div>
     );
@@ -78,6 +79,14 @@ export const router = createBrowserRouter([
         element: <BoardView />,
       },
     ],
+  },
+  {
+    path: '/profile',
+    element: (
+      <ProtectedRoute>
+        <ProfilePage />
+      </ProtectedRoute>
+    ),
   },
   {
     path: '*',

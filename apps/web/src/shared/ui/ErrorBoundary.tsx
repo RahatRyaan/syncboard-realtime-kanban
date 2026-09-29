@@ -32,13 +32,13 @@ export class ErrorBoundary extends Component<Props, State> {
       }
 
       return (
-        <div className="min-h-[400px] flex flex-col items-center justify-center p-8 text-center space-y-4 bg-slate-950 text-slate-100 rounded-3xl border border-slate-800 m-6">
+        <div className="min-h-[400px] flex flex-col items-center justify-center p-8 text-center space-y-4 bg-surface text-content-primary rounded-3xl border border-line m-6">
           <div className="w-14 h-14 rounded-2xl bg-rose-500/10 border border-rose-500/20 text-rose-400 flex items-center justify-center shadow-lg shadow-rose-500/10">
             <AlertOctagon className="w-7 h-7" />
           </div>
           <div className="space-y-1 max-w-md">
-            <h2 className="text-xl font-black text-slate-100">Something went wrong</h2>
-            <p className="text-xs text-slate-400">
+            <h2 className="text-xl font-black text-content-primary">Something went wrong</h2>
+            <p className="text-xs text-content-muted">
               {this.state.error?.message || 'An unexpected error occurred while rendering this component.'}
             </p>
           </div>

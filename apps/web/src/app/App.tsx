@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Outlet, Link, useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Bell, LogOut, Check, Sparkles, ExternalLink } from 'lucide-react';
+import { Bell, LogOut, Check, Sparkles, ExternalLink, Settings } from 'lucide-react';
 import { useAuth } from './providers';
 import {
   getNotificationsApi,
@@ -12,6 +12,7 @@ import {
 import { socketManager } from '../shared/realtime/socket';
 import { ErrorBoundary } from '../shared/ui/ErrorBoundary';
 import { NetworkStatusToast } from '../shared/ui/NetworkStatusToast';
+import { ThemeToggle } from '../shared/ui/ThemeToggle';
 
 export function App() {
   const { user, logout } = useAuth();
@@ -76,23 +77,23 @@ export function App() {
     : 'U';
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans">
+    <div className="min-h-screen bg-surface text-content-primary flex flex-col font-sans">
       {/* Top Navigation */}
-      <header className="border-b border-slate-800/80 bg-slate-950/80 backdrop-blur-md sticky top-0 z-50">
+      <header className="border-b border-line/80 bg-surface/80 backdrop-blur-md sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
           <div className="flex items-center gap-6">
             <Link to="/" className="flex items-center gap-2.5 font-black text-xl tracking-tight">
               <span className="w-8 h-8 rounded-lg bg-gradient-to-tr from-indigo-500 to-purple-500 flex items-center justify-center text-white text-sm shadow-md shadow-indigo-500/30">
                 SB
               </span>
-              <span className="bg-gradient-to-r from-slate-100 to-slate-400 bg-clip-text text-transparent">
+              <span className="bg-gradient-to-r from-content-primary to-content-muted bg-clip-text text-transparent">
                 SyncBoard
               </span>
             </Link>
-            <nav className="hidden md:flex items-center gap-1 text-sm font-medium text-slate-400">
+            <nav className="hidden md:flex items-center gap-1 text-sm font-medium text-content-muted">
               <Link
                 to="/"
-                className="px-3 py-1.5 rounded-md hover:text-slate-100 hover:bg-slate-900 transition-colors text-slate-100 bg-slate-900/50"
+                className="px-3 py-1.5 rounded-md hover:text-content-primary hover:bg-panel transition-colors text-content-primary bg-panel/50"
               >
                 Workspaces
               </Link>
@@ -110,7 +111,7 @@ export function App() {
             <div className="relative">
               <button
                 onClick={() => setShowNotifications(!showNotifications)}
-                className="p-2 bg-slate-900 hover:bg-slate-800 text-slate-300 rounded-xl border border-slate-800 transition-colors relative"
+                className="p-2 bg-panel hover:bg-panel-hover text-content-secondary rounded-xl border border-line transition-colors relative"
                 title="Notifications"
               >
                 <Bell className="w-4 h-4" />
@@ -123,9 +124,9 @@ export function App() {
 
               {/* Notifications Dropdown */}
               {showNotifications && (
-                <div className="absolute right-0 mt-2 w-80 bg-slate-900 border border-slate-800 rounded-2xl shadow-2xl z-50 p-4 space-y-3">
-                  <div className="flex items-center justify-between border-b border-slate-800 pb-2">
-                    <h4 className="text-xs font-bold text-slate-200 uppercase tracking-wider">
+                <div className="absolute right-0 mt-2 w-80 bg-panel border border-line rounded-2xl shadow-2xl z-50 p-4 space-y-3">
+                  <div className="flex items-center justify-between border-b border-line pb-2">
+                    <h4 className="text-xs font-bold text-content-secondary uppercase tracking-wider">
                       Notifications ({unreadCount} unread)
                     </h4>
                     {unreadCount > 0 && (
@@ -140,7 +141,7 @@ export function App() {
 
                   <div className="max-h-72 overflow-y-auto space-y-2">
                     {notifications.length === 0 ? (
-                      <div className="text-xs text-slate-500 italic text-center py-6">
+                      <div className="text-xs text-content-faint italic text-center py-6">
                         No notifications yet.
                       </div>
                     ) : (
@@ -152,19 +153,19 @@ export function App() {
                           }}
                           className={`p-2.5 rounded-xl border transition-all text-xs cursor-pointer ${
                             notif.read
-                              ? 'bg-slate-950/40 border-slate-800/60 opacity-60'
-                              : 'bg-slate-950 border-indigo-500/40 shadow-sm'
+                              ? 'bg-surface/40 border-line/60 opacity-60'
+                              : 'bg-surface border-indigo-500/40 shadow-sm'
                           }`}
                         >
                           <div className="flex items-start justify-between gap-2">
-                            <span className="font-semibold text-slate-200">
+                            <span className="font-semibold text-content-secondary">
                               {notif.content}
                             </span>
                             {!notif.read && (
                               <span className="w-2 h-2 rounded-full bg-indigo-500 shrink-0 mt-1"></span>
                             )}
                           </div>
-                          <div className="text-[10px] text-slate-500 mt-1">
+                          <div className="text-[10px] text-content-faint mt-1">
                             {new Date(notif.createdAt).toLocaleTimeString([], {
                               hour: '2-digit',
                               minute: '2-digit',
@@ -179,17 +180,42 @@ export function App() {
             </div>
 
             {/* User Profile & Logout */}
-            <div className="flex items-center gap-3 pl-2 border-l border-slate-800">
-              <div
-                className="w-8 h-8 rounded-xl bg-gradient-to-br from-indigo-600 to-purple-600 border border-slate-700 flex items-center justify-center text-xs font-black text-white shadow-sm"
-                title={user?.name || user?.email}
+            <div className="flex items-center gap-2 pl-2 border-l border-line">
+              <ThemeToggle />
+
+              <Link
+                to="/profile"
+                className="flex items-center gap-2.5 px-1.5 py-1 rounded-xl hover:bg-panel-hover transition-colors"
+                title="View and edit your profile"
               >
-                {userInitials}
-              </div>
+                {user?.avatarUrl ? (
+                  <img
+                    src={user.avatarUrl}
+                    alt=""
+                    className="w-8 h-8 rounded-xl object-cover border border-line-strong"
+                  />
+                ) : (
+                  <span
+                    className="w-8 h-8 rounded-xl bg-gradient-to-br from-indigo-600 to-purple-600 border border-line-strong flex items-center justify-center text-xs font-black text-white shadow-sm"
+                    aria-hidden="true"
+                  >
+                    {userInitials}
+                  </span>
+                )}
+                <span className="hidden sm:block text-sm font-semibold text-content-secondary max-w-[10rem] truncate">
+                  {user?.name}
+                </span>
+                <Settings
+                  className="w-3.5 h-3.5 text-content-faint hidden sm:block"
+                  aria-hidden="true"
+                />
+              </Link>
+
               <button
                 onClick={handleLogout}
-                className="p-2 hover:bg-slate-900 text-slate-400 hover:text-rose-400 rounded-xl transition-colors"
+                className="p-2 hover:bg-panel text-content-muted hover:text-rose-400 rounded-xl transition-colors"
                 title="Sign out"
+                aria-label="Sign out"
               >
                 <LogOut className="w-4 h-4" />
               </button>

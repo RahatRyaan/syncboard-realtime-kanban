@@ -198,8 +198,8 @@ export function CardDetailModal({ cardId, onClose, onCardUpdated }: CardDetailMo
 
   if (loadingCard || !card) {
     return (
-      <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-        <div className="bg-slate-900 border border-slate-800 p-8 rounded-2xl text-slate-400">
+      <div className="fixed inset-0 bg-surface/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div className="bg-panel border border-line p-8 rounded-2xl text-content-muted">
           Loading card details...
         </div>
       </div>
@@ -207,19 +207,19 @@ export function CardDetailModal({ cardId, onClose, onCardUpdated }: CardDetailMo
   }
 
   return (
-    <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 flex items-center justify-center p-4 overflow-y-auto">
-      <div className="w-full max-w-3xl bg-slate-900 border border-slate-800 rounded-2xl shadow-2xl overflow-hidden my-8 flex flex-col max-h-[90vh]">
+    <div className="fixed inset-0 bg-surface/80 backdrop-blur-md z-50 flex items-center justify-center p-4 overflow-y-auto">
+      <div className="w-full max-w-3xl bg-panel border border-line rounded-2xl shadow-2xl overflow-hidden my-8 flex flex-col max-h-[90vh]">
         {/* Modal Header */}
-        <div className="p-6 border-b border-slate-800/80 flex items-start justify-between gap-4 bg-slate-900/90 sticky top-0 z-10">
+        <div className="p-6 border-b border-line/80 flex items-start justify-between gap-4 bg-panel/90 sticky top-0 z-10">
           <div className="flex-1">
             <input
               type="text"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               onBlur={handleTitleBlur}
-              className="w-full font-black text-xl text-slate-100 bg-transparent border-b border-transparent hover:border-slate-700 focus:border-indigo-500 focus:outline-none transition-colors px-1 py-0.5 rounded"
+              className="w-full font-black text-xl text-content-primary bg-transparent border-b border-transparent hover:border-line-strong focus:border-indigo-500 focus:outline-none transition-colors px-1 py-0.5 rounded"
             />
-            <div className="flex items-center gap-3 mt-1.5 px-1 text-xs text-slate-400">
+            <div className="flex items-center gap-3 mt-1.5 px-1 text-xs text-content-muted">
               <span>Version {card.version}</span>
               <span>•</span>
               <span>Updated {new Date(card.updatedAt).toLocaleDateString()}</span>
@@ -227,7 +227,7 @@ export function CardDetailModal({ cardId, onClose, onCardUpdated }: CardDetailMo
           </div>
           <button
             onClick={onClose}
-            className="p-2 text-slate-400 hover:text-slate-100 hover:bg-slate-800 rounded-xl transition-colors"
+            className="p-2 text-content-muted hover:text-content-primary hover:bg-panel-hover rounded-xl transition-colors"
           >
             <X className="w-5 h-5" />
           </button>
@@ -238,7 +238,7 @@ export function CardDetailModal({ cardId, onClose, onCardUpdated }: CardDetailMo
           {/* Description Section */}
           <div className="space-y-3">
             <div className="flex items-center justify-between">
-              <h4 className="text-xs font-bold text-slate-300 uppercase tracking-wider flex items-center gap-2">
+              <h4 className="text-xs font-bold text-content-secondary uppercase tracking-wider flex items-center gap-2">
                 <Sparkles className="w-4 h-4 text-indigo-400" /> Description
               </h4>
               {!isEditingDesc && (
@@ -258,7 +258,7 @@ export function CardDetailModal({ cardId, onClose, onCardUpdated }: CardDetailMo
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
                   placeholder="Add detailed task description, checklists, or notes..."
-                  className="w-full p-3.5 bg-slate-950 border border-slate-800 rounded-xl text-slate-100 text-sm focus:outline-none focus:border-indigo-500"
+                  className="w-full p-3.5 bg-surface border border-line rounded-xl text-content-primary text-sm focus:outline-none focus:border-indigo-500"
                 />
                 <div className="flex justify-end gap-2">
                   <button
@@ -266,7 +266,7 @@ export function CardDetailModal({ cardId, onClose, onCardUpdated }: CardDetailMo
                       setDescription(card.description || '');
                       setIsEditingDesc(false);
                     }}
-                    className="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold rounded-lg"
+                    className="px-3 py-1.5 bg-panel-hover hover:bg-line-strong text-content-secondary text-xs font-semibold rounded-lg"
                   >
                     Cancel
                   </button>
@@ -282,10 +282,10 @@ export function CardDetailModal({ cardId, onClose, onCardUpdated }: CardDetailMo
             ) : (
               <div
                 onClick={() => setIsEditingDesc(true)}
-                className="p-3.5 bg-slate-950/60 border border-slate-800/80 rounded-xl text-sm text-slate-300 min-h-[60px] cursor-pointer hover:border-slate-700 transition-colors whitespace-pre-wrap"
+                className="p-3.5 bg-surface/60 border border-line/80 rounded-xl text-sm text-content-secondary min-h-[60px] cursor-pointer hover:border-line-strong transition-colors whitespace-pre-wrap"
               >
                 {card.description || (
-                  <span className="text-slate-500 italic">No description provided. Click to add.</span>
+                  <span className="text-content-faint italic">No description provided. Click to add.</span>
                 )}
               </div>
             )}
@@ -294,7 +294,7 @@ export function CardDetailModal({ cardId, onClose, onCardUpdated }: CardDetailMo
           {/* S3 Attachments Section */}
           <div className="space-y-3">
             <div className="flex items-center justify-between">
-              <h4 className="text-xs font-bold text-slate-300 uppercase tracking-wider flex items-center gap-2">
+              <h4 className="text-xs font-bold text-content-secondary uppercase tracking-wider flex items-center gap-2">
                 <Paperclip className="w-4 h-4 text-emerald-400" /> Attachments (
                 {card.attachments?.length || 0})
               </h4>
@@ -321,7 +321,7 @@ export function CardDetailModal({ cardId, onClose, onCardUpdated }: CardDetailMo
                 {card.attachments.map((att) => (
                   <div
                     key={att.id}
-                    className="p-3 bg-slate-950/60 border border-slate-800 rounded-xl flex items-center justify-between gap-3 group"
+                    className="p-3 bg-surface/60 border border-line rounded-xl flex items-center justify-between gap-3 group"
                   >
                     <div className="flex items-center gap-2.5 overflow-hidden">
                       <Paperclip className="w-4 h-4 text-emerald-400 shrink-0" />
@@ -330,18 +330,18 @@ export function CardDetailModal({ cardId, onClose, onCardUpdated }: CardDetailMo
                           href={att.url}
                           target="_blank"
                           rel="noreferrer"
-                          className="text-xs font-semibold text-slate-200 hover:text-emerald-300 truncate block flex items-center gap-1"
+                          className="text-xs font-semibold text-content-secondary hover:text-emerald-300 truncate block flex items-center gap-1"
                         >
                           {att.name} <ExternalLink className="w-3 h-3 inline shrink-0" />
                         </a>
-                        <span className="text-[10px] text-slate-500">
+                        <span className="text-[10px] text-content-faint">
                           {(att.size / 1024).toFixed(1)} KB
                         </span>
                       </div>
                     </div>
                     <button
                       onClick={() => handleRemoveAttachment(att.id)}
-                      className="text-slate-500 hover:text-rose-400 p-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                      className="text-content-faint hover:text-rose-400 p-1 opacity-0 group-hover:opacity-100 transition-opacity"
                     >
                       <Trash2 className="w-3.5 h-3.5" />
                     </button>
@@ -349,15 +349,15 @@ export function CardDetailModal({ cardId, onClose, onCardUpdated }: CardDetailMo
                 ))}
               </div>
             ) : (
-              <div className="text-xs text-slate-500 italic p-3 bg-slate-950/40 rounded-xl border border-slate-800/40">
+              <div className="text-xs text-content-faint italic p-3 bg-surface/40 rounded-xl border border-line/40">
                 No files attached yet.
               </div>
             )}
           </div>
 
           {/* Comments & Mentions Section */}
-          <div className="space-y-4 pt-4 border-t border-slate-800/80">
-            <h4 className="text-xs font-bold text-slate-300 uppercase tracking-wider flex items-center gap-2">
+          <div className="space-y-4 pt-4 border-t border-line/80">
+            <h4 className="text-xs font-bold text-content-secondary uppercase tracking-wider flex items-center gap-2">
               <MessageSquare className="w-4 h-4 text-purple-400" /> Comments & Discussions (
               {comments.length})
             </h4>
@@ -365,25 +365,25 @@ export function CardDetailModal({ cardId, onClose, onCardUpdated }: CardDetailMo
             {/* Comment Stream */}
             <div className="space-y-3 max-h-60 overflow-y-auto pr-1">
               {comments.length === 0 ? (
-                <div className="text-xs text-slate-500 italic p-3 text-center">
+                <div className="text-xs text-content-faint italic p-3 text-center">
                   No comments yet. Type below to start a discussion (use @username to mention teammates).
                 </div>
               ) : (
                 comments.map((comment) => (
                   <div
                     key={comment.id}
-                    className="p-3 bg-slate-950/70 border border-slate-800/80 rounded-xl space-y-1.5 group"
+                    className="p-3 bg-surface/70 border border-line/80 rounded-xl space-y-1.5 group"
                   >
                     <div className="flex items-center justify-between text-xs">
                       <div className="flex items-center gap-2">
                         <div className="w-5 h-5 rounded-full bg-indigo-500/20 text-indigo-300 flex items-center justify-center font-bold text-[10px]">
                           {(comment.user?.name || 'User')[0]}
                         </div>
-                        <span className="font-bold text-slate-200">
+                        <span className="font-bold text-content-secondary">
                           {comment.user?.name || 'User'}
                         </span>
                       </div>
-                      <div className="flex items-center gap-2 text-slate-500 text-[10px]">
+                      <div className="flex items-center gap-2 text-content-faint text-[10px]">
                         <Clock className="w-3 h-3" />
                         {new Date(comment.createdAt).toLocaleTimeString([], {
                           hour: '2-digit',
@@ -392,14 +392,14 @@ export function CardDetailModal({ cardId, onClose, onCardUpdated }: CardDetailMo
                         {comment.userId === user?.id && (
                           <button
                             onClick={() => deleteCommentMutation.mutate(comment.id)}
-                            className="text-slate-500 hover:text-rose-400 opacity-0 group-hover:opacity-100 transition-opacity ml-1"
+                            className="text-content-faint hover:text-rose-400 opacity-0 group-hover:opacity-100 transition-opacity ml-1"
                           >
                             <Trash2 className="w-3 h-3" />
                           </button>
                         )}
                       </div>
                     </div>
-                    <p className="text-xs text-slate-300 pl-7 whitespace-pre-wrap">
+                    <p className="text-xs text-content-secondary pl-7 whitespace-pre-wrap">
                       {comment.content}
                     </p>
                   </div>
@@ -414,7 +414,7 @@ export function CardDetailModal({ cardId, onClose, onCardUpdated }: CardDetailMo
                 value={newComment}
                 onChange={(e) => setNewComment(e.target.value)}
                 placeholder="Write a comment... (use @name to mention)"
-                className="flex-1 px-3.5 py-2 bg-slate-950 border border-slate-800 rounded-xl text-slate-100 text-xs focus:outline-none focus:border-indigo-500"
+                className="flex-1 px-3.5 py-2 bg-surface border border-line rounded-xl text-content-primary text-xs focus:outline-none focus:border-indigo-500"
               />
               <button
                 type="submit"

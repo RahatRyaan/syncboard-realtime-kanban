@@ -5,26 +5,108 @@
 @layer base {
   :root {
     --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+
+    /* Light theme: warm-neutral surfaces, dark text. */
+    --surface: 248 250 252;        /* slate-50  */
+    --surface-raised: 255 255 255; /* white     */
+    --surface-overlay: 255 255 255;
+    --surface-sunken: 241 245 249;  /* slate-100 */
+
+    --panel: 255 255 255;
+    --panel-muted: 248 250 252;
+    --panel-hover: 241 245 249;
+
+    --line: 226 232 240;           /* slate-200 */
+    --line-strong: 203 213 225;    /* slate-300 */
+    --line-faint: 241 245 249;      /* slate-100 */
+
+    --content-primary: 15 23 42;    /* slate-900 */
+    --content-secondary: 51 65 85;  /* slate-700 */
+    --content-muted: 100 116 139;   /* slate-500 */
+    --content-faint: 148 163 184;   /* slate-400 */
+    --content-inverse: 248 250 252; /* slate-50  */
+
+    --accent: 79 70 229;           /* indigo-600 */
+    --accent-soft: 238 242 255;     /* indigo-50 */
+
+    --shadow-panel: 0 1px 2px 0 rgb(15 23 42 / 0.04), 0 8px 24px -6px rgb(15 23 42 / 0.10);
+  }
+
+  .dark {
+    /* Dark theme: preserves the original deep-slate look. */
+    --surface: 2 6 23;             /* slate-950 */
+    --surface-raised: 15 23 42;    /* slate-900 */
+    --surface-overlay: 15 23 42;
+    --surface-sunken: 2 6 23;
+
+    --panel: 15 23 42;             /* slate-900 */
+    --panel-muted: 2 6 23;         /* slate-950 */
+    --panel-hover: 30 41 59;       /* slate-800 */
+
+    --line: 30 41 59;              /* slate-800 */
+    --line-strong: 51 65 85;       /* slate-700 */
+    --line-faint: 30 41 59;
+
+    --content-primary: 241 245 249;  /* slate-100 */
+    --content-secondary: 203 213 225;/* slate-200 */
+    --content-muted: 148 163 184;    /* slate-400 */
+    --content-faint: 100 116 139;    /* slate-500 */
+    --content-inverse: 15 23 42;     /* slate-900 */
+
+    --accent: 129 140 248;           /* indigo-400 */
+    --accent-soft: 49 46 129;         /* indigo-950 */
+
+    --shadow-panel: 0 1px 2px 0 rgb(0 0 0 / 0.30), 0 8px 24px -6px rgb(0 0 0 / 0.45);
+  }
+
+  html {
+    color-scheme: light;
+  }
+
+  html.dark {
+    color-scheme: dark;
   }
 
   body {
     font-family: var(--font-sans);
-    background-color: #030712;
-    color: #f8fafc;
+    background-color: rgb(var(--surface));
+    color: rgb(var(--content-primary));
+  }
+
+  /* Respect users who ask the OS to reduce motion. */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
   }
 }
 
-/* Glassmorphism utilities */
-.glass-panel {
-  background: rgba(15, 23, 42, 0.75);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-}
+@layer components {
+  .glass-panel {
+    background: rgb(var(--panel) / 0.75);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgb(var(--line));
+  }
 
-.glass-card {
-  background: rgba(30, 41, 59, 0.65);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  border: 1px solid rgba(255, 255, 255, 0.06);
+  .glass-card {
+    background: rgb(var(--surface-raised) / 0.65);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgb(var(--line-faint));
+  }
+
+  /* Consistent focus ring across all interactive elements. */
+  .focus-ring {
+    @apply outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2;
+  }
+
+  .focus-ring-light {
+    @apply outline-none focus-visible:ring-2 focus-visible:ring-indigo-400 focus-visible:ring-offset-2 focus-visible:ring-offset-surface;
+  }
 }

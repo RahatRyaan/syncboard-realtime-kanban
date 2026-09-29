@@ -79,17 +79,17 @@ function SortableCardItem({ card, onClick }: SortableCardItemProps) {
       {...attributes}
       {...listeners}
       onClick={onClick}
-      className="p-3.5 bg-slate-900 border border-slate-800/90 hover:border-indigo-500/50 rounded-xl cursor-grab active:cursor-grabbing shadow-sm hover:shadow-md transition-all group select-none space-y-2.5"
+      className="p-3.5 bg-panel border border-line/90 hover:border-indigo-500/50 rounded-xl cursor-grab active:cursor-grabbing shadow-sm hover:shadow-md transition-all group select-none space-y-2.5"
     >
-      <div className="font-semibold text-sm text-slate-100 group-hover:text-indigo-200 transition-colors">
+      <div className="font-semibold text-sm text-content-primary group-hover:text-indigo-200 transition-colors">
         {card.title}
       </div>
 
       {card.description && (
-        <p className="text-xs text-slate-400 line-clamp-2">{card.description}</p>
+        <p className="text-xs text-content-muted line-clamp-2">{card.description}</p>
       )}
 
-      <div className="flex items-center justify-between text-xs text-slate-500 pt-1">
+      <div className="flex items-center justify-between text-xs text-content-faint pt-1">
         <div className="flex items-center gap-3">
           {card.attachments && card.attachments.length > 0 && (
             <span className="flex items-center gap-1 text-[11px] text-emerald-400">
@@ -97,7 +97,7 @@ function SortableCardItem({ card, onClick }: SortableCardItemProps) {
               {card.attachments.length}
             </span>
           )}
-          <span className="text-[10px] bg-slate-800/80 px-1.5 py-0.5 rounded text-slate-400 font-mono">
+          <span className="text-[10px] bg-panel-hover/80 px-1.5 py-0.5 rounded text-content-muted font-mono">
             v{card.version}
           </span>
         </div>
@@ -132,28 +132,28 @@ function KanbanColumn({
   return (
     <div
       ref={setNodeRef}
-      className="w-80 shrink-0 bg-slate-900/50 border border-slate-800/80 rounded-2xl flex flex-col max-h-[80vh] overflow-hidden"
+      className="w-80 shrink-0 bg-panel/50 border border-line/80 rounded-2xl flex flex-col max-h-[80vh] overflow-hidden"
     >
       {/* Column Header */}
-      <div className="p-4 border-b border-slate-800/80 flex items-center justify-between bg-slate-900/80">
+      <div className="p-4 border-b border-line/80 flex items-center justify-between bg-panel/80">
         <div className="flex items-center gap-2">
           <span className="w-2.5 h-2.5 rounded-full bg-indigo-500"></span>
-          <h3 className="font-bold text-sm text-slate-200">{column.title}</h3>
-          <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-slate-800 text-slate-400">
+          <h3 className="font-bold text-sm text-content-secondary">{column.title}</h3>
+          <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-panel-hover text-content-muted">
             {cards.length}
           </span>
         </div>
         <div className="flex items-center gap-1">
           <button
             onClick={() => onAddCard(column.id)}
-            className="p-1 hover:bg-slate-800 text-slate-400 hover:text-slate-100 rounded-lg transition-colors"
+            className="p-1 hover:bg-panel-hover text-content-muted hover:text-content-primary rounded-lg transition-colors"
             title="Add card"
           >
             <Plus className="w-4 h-4" />
           </button>
           <button
             onClick={() => onDeleteColumn(column.id)}
-            className="p-1 hover:bg-slate-800 text-slate-500 hover:text-rose-400 rounded-lg transition-colors"
+            className="p-1 hover:bg-panel-hover text-content-faint hover:text-rose-400 rounded-lg transition-colors"
             title="Delete column"
           >
             <Trash2 className="w-3.5 h-3.5" />
@@ -173,17 +173,17 @@ function KanbanColumn({
           ))}
         </SortableContext>
         {cards.length === 0 && (
-          <div className="h-20 border border-dashed border-slate-800/60 rounded-xl flex items-center justify-center text-xs text-slate-600">
+          <div className="h-20 border border-dashed border-line/60 rounded-xl flex items-center justify-center text-xs text-content-faint">
             Drop cards here
           </div>
         )}
       </div>
 
       {/* Column Footer */}
-      <div className="p-2.5 border-t border-slate-800/60 bg-slate-900/30">
+      <div className="p-2.5 border-t border-line/60 bg-panel/30">
         <button
           onClick={() => onAddCard(column.id)}
-          className="w-full py-1.5 text-xs text-slate-400 hover:text-indigo-300 hover:bg-slate-800/60 rounded-lg font-semibold flex items-center justify-center gap-1 transition-colors"
+          className="w-full py-1.5 text-xs text-content-muted hover:text-indigo-300 hover:bg-panel-hover/60 rounded-lg font-semibold flex items-center justify-center gap-1 transition-colors"
         >
           <Plus className="w-3.5 h-3.5" /> Add card
         </button>
@@ -412,7 +412,7 @@ export function BoardView() {
 
   if (loadingBoard || loadingColumns) {
     return (
-      <div className="flex items-center justify-center p-24 text-slate-400">
+      <div className="flex items-center justify-center p-24 text-content-muted">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-500 mr-3"></div>
         Loading Kanban Board...
       </div>
@@ -421,7 +421,7 @@ export function BoardView() {
 
   if (!board) {
     return (
-      <div className="p-12 text-center text-slate-400">
+      <div className="p-12 text-center text-content-muted">
         Board not found.{' '}
         <Link to="/" className="text-indigo-400 underline">
           Return to Dashboard
@@ -431,25 +431,25 @@ export function BoardView() {
   }
 
   return (
-    <div className="flex flex-col h-[calc(100vh-4rem)] bg-slate-950 overflow-hidden">
+    <div className="flex flex-col h-[calc(100vh-4rem)] bg-surface overflow-hidden">
       {/* Board Top Header */}
-      <div className="px-6 py-4 border-b border-slate-800/80 bg-slate-950 flex items-center justify-between shrink-0">
+      <div className="px-6 py-4 border-b border-line/80 bg-surface flex items-center justify-between shrink-0">
         <div className="flex items-center gap-4">
           <Link
             to="/"
-            className="p-2 bg-slate-900 hover:bg-slate-800 text-slate-400 hover:text-slate-100 rounded-xl transition-colors"
+            className="p-2 bg-panel hover:bg-panel-hover text-content-muted hover:text-content-primary rounded-xl transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
           </Link>
           <div>
             <div className="flex items-center gap-2.5">
-              <h1 className="text-xl font-extrabold text-slate-100">{board.title}</h1>
+              <h1 className="text-xl font-extrabold text-content-primary">{board.title}</h1>
               <span className="text-[11px] font-semibold px-2 py-0.5 bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 rounded-full">
                 v{board.version}
               </span>
             </div>
             {board.description && (
-              <p className="text-xs text-slate-400 mt-0.5 line-clamp-1">{board.description}</p>
+              <p className="text-xs text-content-muted mt-0.5 line-clamp-1">{board.description}</p>
             )}
           </div>
         </div>
@@ -457,14 +457,14 @@ export function BoardView() {
         {/* Presence Avatars & Actions */}
         <div className="flex items-center gap-3">
           {/* Live Collaborators Presence Stack */}
-          <div className="flex items-center gap-1.5 bg-slate-900 border border-slate-800 px-3 py-1.5 rounded-full">
+          <div className="flex items-center gap-1.5 bg-panel border border-line px-3 py-1.5 rounded-full">
             <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-            <span className="text-xs font-semibold text-slate-300 mr-1.5">
+            <span className="text-xs font-semibold text-content-secondary mr-1.5">
               {onlineUsers.length || 1} online
             </span>
             <div className="flex -space-x-1.5 overflow-hidden">
               <div
-                className="w-6 h-6 rounded-full bg-indigo-600 text-white font-bold text-[10px] flex items-center justify-center border border-slate-900"
+                className="w-6 h-6 rounded-full bg-indigo-600 text-white font-bold text-[10px] flex items-center justify-center border border-line-strong"
                 title={user?.name || 'You'}
               >
                 {(user?.name || 'U')[0]}
@@ -474,7 +474,7 @@ export function BoardView() {
 
           <button
             onClick={() => setShowActivityDrawer(!showActivityDrawer)}
-            className="p-2 bg-slate-900 hover:bg-slate-800 text-slate-300 rounded-xl border border-slate-800 transition-colors"
+            className="p-2 bg-panel hover:bg-panel-hover text-content-secondary rounded-xl border border-line transition-colors"
             title="Activity Feed"
           >
             <Activity className="w-4 h-4" />
@@ -522,8 +522,8 @@ export function BoardView() {
 
           <DragOverlay>
             {activeCard ? (
-              <div className="p-3.5 bg-slate-900 border border-indigo-500 rounded-xl shadow-2xl scale-105 opacity-90 rotate-2 select-none">
-                <div className="font-semibold text-sm text-slate-100">{activeCard.title}</div>
+              <div className="p-3.5 bg-panel border border-indigo-500 rounded-xl shadow-2xl scale-105 opacity-90 rotate-2 select-none">
+                <div className="font-semibold text-sm text-content-primary">{activeCard.title}</div>
               </div>
             ) : null}
           </DragOverlay>
@@ -531,8 +531,8 @@ export function BoardView() {
 
         {/* Add Column Card */}
         {isAddingColumn ? (
-          <div className="w-80 shrink-0 bg-slate-900 border border-slate-800 p-4 rounded-2xl space-y-3">
-            <h4 className="text-xs font-bold text-slate-300 uppercase">New Column</h4>
+          <div className="w-80 shrink-0 bg-panel border border-line p-4 rounded-2xl space-y-3">
+            <h4 className="text-xs font-bold text-content-secondary uppercase">New Column</h4>
             <form onSubmit={handleAddColumn} className="space-y-3">
               <input
                 type="text"
@@ -541,13 +541,13 @@ export function BoardView() {
                 value={newColTitle}
                 onChange={(e) => setNewColTitle(e.target.value)}
                 placeholder="Column title (e.g. In Review)"
-                className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-slate-100 focus:outline-none focus:border-indigo-500"
+                className="w-full px-3 py-2 bg-surface border border-line rounded-xl text-xs text-content-primary focus:outline-none focus:border-indigo-500"
               />
               <div className="flex justify-end gap-2">
                 <button
                   type="button"
                   onClick={() => setIsAddingColumn(false)}
-                  className="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold rounded-lg"
+                  className="px-3 py-1.5 bg-panel-hover hover:bg-line-strong text-content-secondary text-xs font-semibold rounded-lg"
                 >
                   Cancel
                 </button>
@@ -564,7 +564,7 @@ export function BoardView() {
         ) : (
           <button
             onClick={() => setIsAddingColumn(true)}
-            className="w-80 shrink-0 h-32 border border-dashed border-slate-800/80 hover:border-slate-600 rounded-2xl flex flex-col items-center justify-center text-slate-400 hover:text-slate-200 transition-all gap-2"
+            className="w-80 shrink-0 h-32 border border-dashed border-line/80 hover:border-line-strong rounded-2xl flex flex-col items-center justify-center text-content-muted hover:text-content-secondary transition-all gap-2"
           >
             <Plus className="w-5 h-5" />
             <span className="text-xs font-semibold">Add another column</span>
@@ -574,12 +574,12 @@ export function BoardView() {
 
       {/* Modal: Add Card */}
       {newCardTargetCol && (
-        <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="w-full max-w-md bg-slate-900 border border-slate-800 p-6 rounded-2xl shadow-2xl space-y-4">
-            <h3 className="text-base font-bold text-slate-100">Create New Card</h3>
+        <div className="fixed inset-0 bg-surface/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="w-full max-w-md bg-panel border border-line p-6 rounded-2xl shadow-2xl space-y-4">
+            <h3 className="text-base font-bold text-content-primary">Create New Card</h3>
             <form onSubmit={handleAddCard} className="space-y-4">
               <div>
-                <label className="block text-xs font-semibold text-slate-300 mb-1">
+                <label className="block text-xs font-semibold text-content-secondary mb-1">
                   Card Title
                 </label>
                 <input
@@ -589,14 +589,14 @@ export function BoardView() {
                   value={newCardTitle}
                   onChange={(e) => setNewCardTitle(e.target.value)}
                   placeholder="Task summary..."
-                  className="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-slate-100 text-sm focus:outline-none focus:border-indigo-500"
+                  className="w-full px-3.5 py-2.5 bg-surface border border-line rounded-xl text-content-primary text-sm focus:outline-none focus:border-indigo-500"
                 />
               </div>
               <div className="flex justify-end gap-2.5 pt-2">
                 <button
                   type="button"
                   onClick={() => setNewCardTargetCol(null)}
-                  className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold rounded-xl"
+                  className="px-4 py-2 bg-panel-hover hover:bg-line-strong text-content-secondary text-xs font-semibold rounded-xl"
                 >
                   Cancel
                 </button>
@@ -628,14 +628,14 @@ export function BoardView() {
 
       {/* Activity Log Drawer */}
       {showActivityDrawer && (
-        <div className="fixed inset-y-0 right-0 w-80 bg-slate-900 border-l border-slate-800 z-40 p-6 flex flex-col space-y-4 shadow-2xl">
-          <div className="flex items-center justify-between pb-3 border-b border-slate-800">
-            <h3 className="text-sm font-bold text-slate-100 flex items-center gap-2">
+        <div className="fixed inset-y-0 right-0 w-80 bg-panel border-l border-line z-40 p-6 flex flex-col space-y-4 shadow-2xl">
+          <div className="flex items-center justify-between pb-3 border-b border-line">
+            <h3 className="text-sm font-bold text-content-primary flex items-center gap-2">
               <Activity className="w-4 h-4 text-indigo-400" /> Activity Feed
             </h3>
             <button
               onClick={() => setShowActivityDrawer(false)}
-              className="text-xs text-slate-400 hover:text-slate-200"
+              className="text-xs text-content-muted hover:text-content-secondary"
             >
               Close
             </button>
@@ -645,18 +645,18 @@ export function BoardView() {
               activityLogs.data.map((log: any) => (
                 <div
                   key={log.id || log._id}
-                  className="p-3 bg-slate-950/60 border border-slate-800/80 rounded-xl text-xs space-y-1"
+                  className="p-3 bg-surface/60 border border-line/80 rounded-xl text-xs space-y-1"
                 >
-                  <div className="font-semibold text-slate-200 capitalize">
+                  <div className="font-semibold text-content-secondary capitalize">
                     {log.action.replace('.', ' ')}
                   </div>
-                  <div className="text-[11px] text-slate-500">
+                  <div className="text-[11px] text-content-faint">
                     {new Date(log.createdAt).toLocaleString()}
                   </div>
                 </div>
               ))
             ) : (
-              <div className="text-xs text-slate-500 italic text-center p-6">
+              <div className="text-xs text-content-faint italic text-center p-6">
                 No recent activity logs.
               </div>
             )}
