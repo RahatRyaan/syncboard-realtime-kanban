@@ -1,4 +1,12 @@
-import { IsInt, IsNotEmpty, IsString, Matches, Max, Min } from 'class-validator';
+import {
+  IsInt,
+  IsNotEmpty,
+  IsString,
+  Matches,
+  Max,
+  MaxLength,
+  Min,
+} from 'class-validator';
 
 export const AVATAR_MAX_BYTES = 2 * 1024 * 1024;
 export const AVATAR_MIME_TYPES = ['image/jpeg', 'image/png', 'image/webp'] as const;
@@ -6,7 +14,9 @@ export const AVATAR_MIME_TYPES = ['image/jpeg', 'image/png', 'image/webp'] as co
 export class AvatarPresignDto {
   @IsString()
   @IsNotEmpty({ message: 'File name is required' })
-  @Max(255, { message: 'File name is too long' })
+  // MaxLength, not Max. @Max validates a numeric value, so on a string field it
+  // rejects every input and the whole presign request fails validation.
+  @MaxLength(255, { message: 'File name is too long' })
   fileName: string;
 
   @IsString()
