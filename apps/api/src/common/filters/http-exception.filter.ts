@@ -28,7 +28,12 @@ export class HttpExceptionFilter implements ExceptionFilter {
       } else if (typeof res === 'object' && res !== null) {
         const resObj = res as Record<string, unknown>;
         message = (resObj.message as string) || exception.message;
-        code = this.mapStatusToErrorCode(status);
+        // Prefer a code the handler set explicitly (e.g. PLAN_LIMIT_REACHED)
+        // over a status-derived default, so callers can branch on it.
+        code =
+          typeof resObj.code === 'string'
+            ? resObj.code
+            : this.mapStatusToErrorCode(status);
         if (Array.isArray(resObj.message)) {
           details = resObj.message;
           message = 'Validation failed';
@@ -64,7 +69,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
       case HttpStatus.BAD_REQUEST:
         return ApiErrorCodes.BAD_REQUEST;
       case HttpStatus.CONFLICT:
-        return ApiErrorCodes.VERSION_CONFLICT;
+        return ApiErrorCodes.CONFLICT;
       default:
         return ApiErrorCodes.INTERNAL_ERROR;
     }

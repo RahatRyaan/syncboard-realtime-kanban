@@ -5,12 +5,14 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { UsersModule } from '../users/users.module';
+import { StorageModule } from '../storage/storage.module';
 import { RefreshToken, RefreshTokenSchema } from './schemas/refresh-token.schema';
 
 @Global()
 @Module({
   imports: [
     UsersModule,
+    StorageModule,
     MongooseModule.forFeature([
       { name: RefreshToken.name, schema: RefreshTokenSchema },
     ]),

@@ -20,6 +20,7 @@ import { StorageModule } from './modules/storage/storage.module';
 import { SearchModule } from './modules/search/search.module';
 import { HealthModule } from './modules/health/health.module';
 import { MetricsModule } from './modules/metrics/metrics.module';
+import { DemoModule } from './modules/demo/demo.module';
 import { MetricsInterceptor } from './modules/metrics/metrics.interceptor';
 
 @Module({
@@ -63,6 +64,7 @@ import { MetricsInterceptor } from './modules/metrics/metrics.interceptor';
     SearchModule,
     HealthModule,
     MetricsModule,
+    DemoModule,
   ],
   providers: [
     {

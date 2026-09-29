@@ -21,6 +21,7 @@ export class StorageService {
   private readonly s3Client: S3Client;
   private readonly bucketName: string;
   private readonly region: string;
+  private readonly configured: boolean;
 
   constructor(private readonly configService: ConfigService) {
     this.region = this.configService.get<string>('aws.region', 'us-east-1');
@@ -35,6 +36,8 @@ export class StorageService {
       '',
     );
 
+    this.configured = Boolean(accessKeyId && secretAccessKey && this.bucketName);
+
     this.s3Client = new S3Client({
       region: this.region,
       credentials:
@@ -42,6 +45,15 @@ export class StorageService {
           ? { accessKeyId, secretAccessKey }
           : undefined,
     });
+  }
+
+  /**
+   * Presigned uploads require explicit credentials. Callers should check this
+   * before attempting a presign so a misconfigured environment surfaces as a
+   * clear 403 instead of an opaque AWS SDK error.
+   */
+  isConfigured(): boolean {
+    return this.configured;
   }
 
   async createPresignedUploadUrl(params: {

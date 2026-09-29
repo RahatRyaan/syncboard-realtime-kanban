@@ -3,6 +3,8 @@ import {
   ConflictException,
   UnauthorizedException,
   NotFoundException,
+  ForbiddenException,
+  Logger,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
@@ -13,14 +15,25 @@ import * as crypto from 'crypto';
 import { Response, Request } from 'express';
 import { UsersService } from '../users/users.service';
 import { RefreshToken, RefreshTokenDocument } from './schemas/refresh-token.schema';
-import { RegisterDto, LoginDto, User } from '@syncboard/shared-types';
+import {
+  RegisterDto,
+  LoginDto,
+  UpdateProfileDto,
+  User,
+} from '@syncboard/shared-types';
+import { StorageService } from '../storage/storage.service';
+import { UpdateProfileDto as UpdateProfileValidationDto } from './dto/update-profile.dto';
+import { AvatarPresignDto } from './dto/avatar-presign.dto';
 
 @Injectable()
 export class AuthService {
+  private readonly logger = new Logger(AuthService.name);
+
   constructor(
     private readonly usersService: UsersService,
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
+    private readonly storageService: StorageService,
     @InjectModel(RefreshToken.name)
     private readonly refreshTokenModel: Model<RefreshTokenDocument>,
   ) {}
@@ -55,16 +68,20 @@ export class AuthService {
   }
 
   async register(dto: RegisterDto, res: Response) {
-    const existing = await this.usersService.findByEmail(dto.email);
+    // Normalize before the conflict check. Mongoose lowercases on write, so an
+    // un-normalized check would let a differently-cased duplicate through and
+    // surface as a raw duplicate-key error instead of a clean 409.
+    const email = dto.email.toLowerCase().trim();
+    const existing = await this.usersService.findByEmail(email);
     if (existing) {
       throw new ConflictException('Email already registered');
     }
 
     const hashedPassword = await argon2.hash(dto.password);
     const userDoc = await this.usersService.create({
-      email: dto.email,
+      email,
       password: hashedPassword,
-      name: dto.name,
+      name: dto.name.trim(),
     });
 
     const userJson = userDoc.toJSON() as unknown as User;
@@ -216,6 +233,47 @@ export class AuthService {
       throw new NotFoundException('User not found');
     }
     return userDoc.toJSON() as unknown as User;
+  }
+
+  /**
+   * Applies a partial profile update. Only keys explicitly present in the
+   * payload are written, so a sparse form does not erase other fields.
+   */
+  async updateProfile(userId: string, dto: UpdateProfileValidationDto): Promise<User> {
+    const updates: Record<string, string> = {};
+
+    if (dto.name !== undefined) updates.name = dto.name.trim();
+    if (dto.bio !== undefined) updates.bio = dto.bio.trim();
+    if (dto.jobTitle !== undefined) updates.jobTitle = dto.jobTitle.trim();
+    if (dto.location !== undefined) updates.location = dto.location.trim();
+    if (dto.avatarUrl !== undefined) updates.avatarUrl = dto.avatarUrl;
+
+    if (Object.keys(updates).length === 0) {
+      throw new ForbiddenException('No valid profile fields supplied');
+    }
+
+    const userDoc = await this.usersService.updateProfile(userId, updates);
+    return userDoc.toJSON() as unknown as User;
+  }
+
+  /**
+   * Issues a short-lived presigned PUT so the browser can upload an avatar
+   * straight to S3 without proxying bytes through the API.
+   */
+  async presignAvatarUpload(userId: string, dto: AvatarPresignDto) {
+    if (!this.storageService.isConfigured()) {
+      throw new ForbiddenException(
+        'File uploads are not configured on this server. Set AWS credentials to enable avatar uploads.',
+      );
+    }
+
+    const presigned = await this.storageService.createPresignedUploadUrl({
+      folder: `avatars/${userId}`,
+      fileName: dto.fileName,
+      mimeType: dto.mimeType,
+    });
+
+    return presigned;
   }
 
   private async generateAccessToken(user: User): Promise<string> {

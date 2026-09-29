@@ -21,5 +21,7 @@
     "paths": {
       "@syncboard/shared-types": ["../../packages/shared-types/dist/index.d.ts"]
     }
-  }
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist", "test", "**/*spec.ts"]
 }

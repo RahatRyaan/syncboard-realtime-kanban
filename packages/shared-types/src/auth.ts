@@ -6,6 +6,9 @@ export interface User {
   email: string;
   name: string;
   avatarUrl?: string;
+  bio?: string;
+  jobTitle?: string;
+  location?: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -78,4 +81,25 @@ export interface RegisterDto {
 export interface LoginDto {
   email: string;
   password: string;
+}
+
+/**
+ * Fields a signed-in user may change on their own profile.
+ * Email and password are intentionally excluded — those need dedicated flows.
+ */
+export interface UpdateProfileDto {
+  name?: string;
+  bio?: string;
+  jobTitle?: string;
+  location?: string;
+  avatarUrl?: string;
+}
+
+/**
+ * Presigned upload descriptor for a direct-to-S3 avatar upload.
+ */
+export interface AvatarPresignDto {
+  fileName: string;
+  mimeType: string;
+  size: number;
 }

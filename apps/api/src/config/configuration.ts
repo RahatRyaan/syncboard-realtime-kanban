@@ -22,4 +22,14 @@ export default () => ({
     region: process.env.AWS_REGION || 'us-east-1',
     bucketName: process.env.AWS_BUCKET_NAME || '',
   },
+  demo: {
+    seedEnabled: process.env.SEED_DEMO_DATA === 'true',
+    accountEmail: process.env.DEMO_ACCOUNT_EMAIL || 'demo@syncboard.app',
+    // Only published to the client when demo seeding is explicitly enabled, so
+    // a production build has no way to surface a known credential.
+    accountPassword:
+      process.env.SEED_DEMO_DATA === 'true'
+        ? process.env.DEMO_ACCOUNT_PASSWORD || 'SyncBoard!Demo2026'
+        : undefined,
+  },
 });

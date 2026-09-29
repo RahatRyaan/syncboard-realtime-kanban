@@ -11,11 +11,20 @@ export class User {
   @Prop({ required: true })
   password: string; // Argon2 hash
 
-  @Prop({ required: true, trim: true })
+  @Prop({ required: true, trim: true, minlength: 2, maxlength: 60 })
   name: string;
 
   @Prop({ required: false })
   avatarUrl?: string;
+
+  @Prop({ required: false, trim: true, maxlength: 200 })
+  jobTitle?: string;
+
+  @Prop({ required: false, trim: true, maxlength: 300 })
+  bio?: string;
+
+  @Prop({ required: false, trim: true, maxlength: 80 })
+  location?: string;
 
   createdAt: Date;
   updatedAt: Date;
